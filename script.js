@@ -1,36 +1,102 @@
-// DOM elements
 const textInput = document.getElementById('textInput');
 const checkSentimentBtn = document.getElementById('checkSentiment');
 const sentimentBadge = document.getElementById('sentimentBadge');
 const badgeText = sentimentBadge.querySelector('.badge-text');
 
-// Sentiment options
-const sentiments = ['Positive', 'Negative', 'Neutral'];
+const positiveWords = [
+    'good', 'great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'awesome',
+    'love', 'loved', 'loving', 'beautiful', 'perfect', 'best', 'happy', 'joy',
+    'joyful', 'delightful', 'exciting', 'excited', 'brilliant', 'superb',
+    'outstanding', 'fabulous', 'terrific', 'magnificent', 'splendid', 'marvelous',
+    'lovely', 'nice', 'pleasant', 'glad', 'satisfied', 'positive', 'success',
+    'successful', 'winner', 'winning', 'enjoy', 'enjoyed', 'enjoying', 'fun',
+    'funny', 'laugh', 'laughing', 'smile', 'smiling', 'thanks', 'thank',
+    'grateful', 'appreciate', 'appreciated', 'blessing', 'blessed', 'proud',
+    'celebrate', 'celebration', 'hope', 'hopeful', 'inspire', 'inspiring',
+    'brilliant', 'incredible', 'impressive', 'remarkable', 'worthy', 'valuable',
+    'adorable', 'charming', 'delicious', 'yummy', 'tasty', 'divine', 'comfortable'
+];
 
-// Function to get random sentiment
-function getRandomSentiment() {
-    const randomIndex = Math.floor(Math.random() * sentiments.length);
-    return sentiments[randomIndex];
+const negativeWords = [
+    'bad', 'terrible', 'horrible', 'awful', 'worst', 'hate', 'hated', 'hating',
+    'sad', 'unhappy', 'depressed', 'disappointing', 'disappointed', 'disappointment',
+    'angry', 'mad', 'furious', 'annoying', 'annoyed', 'frustrating', 'frustrated',
+    'poor', 'inferior', 'useless', 'pathetic', 'fail', 'failed', 'failure',
+    'wrong', 'mistake', 'error', 'problem', 'difficult', 'hard', 'struggle',
+    'struggling', 'pain', 'painful', 'hurt', 'hurting', 'sick', 'ill', 'disease',
+    'die', 'death', 'kill', 'dead', 'lose', 'lost', 'loser', 'losing', 'defeat',
+    'defeated', 'ugly', 'disgusting', 'gross', 'nasty', 'rude', 'mean', 'cruel',
+    'harsh', 'severe', 'critical', 'negative', 'never', 'nothing', 'nobody',
+    'worthless', 'hopeless', 'helpless', 'miserable', 'sad', 'sorry', 'regret',
+    'waste', 'wasted', 'broken', 'damage', 'damaged', 'destroy', 'destroyed'
+];
+
+const negations = ['not', 'no', 'never', 'neither', 'nobody', 'nothing', 'nowhere', "don't", "doesn't", "didn't", "won't", "wouldn't", "shouldn't", "can't", "cannot"];
+
+function analyzeSentiment(text) {
+    const words = text.toLowerCase().match(/\b\w+\b/g);
+    
+    if (!words || words.length === 0) {
+        return 'Neutral';
+    }
+
+    let positiveScore = 0;
+    let negativeScore = 0;
+    let negationFlag = false;
+
+    for (let i = 0; i < words.length; i++) {
+        const word = words[i];
+        
+        if (negations.includes(word)) {
+            negationFlag = true;
+            continue;
+        }
+
+        const isPositive = positiveWords.includes(word);
+        const isNegative = negativeWords.includes(word);
+
+        if (isPositive) {
+            if (negationFlag) {
+                negativeScore += 1;
+            } else {
+                positiveScore += 1;
+            }
+        } else if (isNegative) {
+            if (negationFlag) {
+                positiveScore += 1;
+            } else {
+                negativeScore += 1;
+            }
+        }
+
+        if (isPositive || isNegative) {
+            negationFlag = false;
+        }
+    }
+
+    const totalScore = positiveScore - negativeScore;
+    const totalWords = words.length;
+    const sentimentRatio = totalScore / totalWords;
+
+    if (totalScore > 0 && sentimentRatio > 0.05) {
+        return 'Positive';
+    } else if (totalScore < 0 && sentimentRatio < -0.05) {
+        return 'Negative';
+    } else {
+        return 'Neutral';
+    }
 }
 
-// Function to update badge appearance
 function updateBadge(sentiment) {
-    // Remove all sentiment classes
     sentimentBadge.classList.remove('positive', 'negative', 'neutral', 'hidden');
-    
-    // Add the new sentiment class
     sentimentBadge.classList.add(sentiment.toLowerCase());
     sentimentBadge.classList.add('show');
-    
-    // Update badge text
     badgeText.textContent = sentiment;
 }
 
-// Function to add loading effect
 function showLoadingEffect() {
     checkSentimentBtn.disabled = true;
     checkSentimentBtn.style.opacity = '0.7';
-    
     const btnText = checkSentimentBtn.querySelector('.btn-text');
     const originalText = btnText.textContent;
     
@@ -39,49 +105,41 @@ function showLoadingEffect() {
         dots = dots.length >= 3 ? '' : dots + '.';
         btnText.textContent = `Analyzing${dots}`;
     }, 200);
-    
-    // Simulate analysis time (1-2 seconds)
-    const analysisTime = Math.random() * 1000 + 1000;
-    
+
     setTimeout(() => {
         clearInterval(loadingInterval);
         btnText.textContent = originalText;
         checkSentimentBtn.disabled = false;
         checkSentimentBtn.style.opacity = '1';
         
-        // Show random sentiment
-        const randomSentiment = getRandomSentiment();
-        updateBadge(randomSentiment);
-    }, analysisTime);
+        const text = textInput.value;
+        const sentiment = analyzeSentiment(text);
+        updateBadge(sentiment);
+    }, 800);
 }
 
-// Function to validate input
 function validateInput() {
     const text = textInput.value.trim();
+    
     if (text.length === 0) {
-        // Show error state
         textInput.style.borderColor = '#ff416c';
         textInput.style.boxShadow = '0 0 0 3px rgba(255, 65, 108, 0.1)';
-        
-        // Reset error state after 2 seconds
         setTimeout(() => {
             textInput.style.borderColor = '#e1e5e9';
             textInput.style.boxShadow = 'none';
         }, 2000);
-        
         return false;
     }
+    
     return true;
 }
 
-// Event listeners
 checkSentimentBtn.addEventListener('click', () => {
     if (validateInput()) {
         showLoadingEffect();
     }
 });
 
-// Allow Enter key to trigger analysis (Ctrl+Enter or Shift+Enter)
 textInput.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.shiftKey) && e.key === 'Enter') {
         e.preventDefault();
@@ -91,7 +149,6 @@ textInput.addEventListener('keydown', (e) => {
     }
 });
 
-// Reset badge when input is cleared
 textInput.addEventListener('input', () => {
     if (textInput.value.trim().length === 0) {
         sentimentBadge.classList.remove('show', 'positive', 'negative', 'neutral');
@@ -99,7 +156,6 @@ textInput.addEventListener('input', () => {
     }
 });
 
-// Add some interactive feedback
 textInput.addEventListener('focus', () => {
     textInput.parentElement.style.transform = 'scale(1.02)';
 });
@@ -108,8 +164,5 @@ textInput.addEventListener('blur', () => {
     textInput.parentElement.style.transform = 'scale(1)';
 });
 
-// Add smooth transition for input section
 textInput.parentElement.style.transition = 'transform 0.2s ease';
-
-// Initialize - hide badge on load
 sentimentBadge.classList.add('hidden');
