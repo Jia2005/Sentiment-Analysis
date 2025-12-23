@@ -1,0 +1,263 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.analysis-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.input-section {
+    margin-bottom: 25px;
+}
+
+#textInput {
+    width: 100%;
+    padding: 20px;
+    border: 2px solid #e1e5e9;
+    border-radius: 15px;
+    font-size: 16px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 120px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+#textInput:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: white;
+}
+
+#textInput::placeholder {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.button-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.check-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.check-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+}
+
+.check-btn:active {
+    transform: translateY(0);
+}
+
+.check-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.check-btn:hover::before {
+    left: 100%;
+}
+
+.btn-icon {
+    font-size: 20px;
+}
+
+.result-section {
+    text-align: center;
+}
+
+.sentiment-badge {
+    display: inline-block;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.4s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.sentiment-badge.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+.sentiment-badge.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.sentiment-badge.positive {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    color: #2d5016;
+    animation: bounceIn 0.6s ease;
+}
+
+.sentiment-badge.negative {
+    background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+    color: white;
+    animation: bounceIn 0.6s ease;
+}
+
+.sentiment-badge.neutral {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #8b4513;
+    animation: bounceIn 0.6s ease;
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3) translateY(20px);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05) translateY(-5px);
+    }
+    70% {
+        transform: scale(0.9) translateY(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.sentiment-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+}
+
+.sentiment-badge:hover::before {
+    left: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .analysis-card {
+        padding: 25px;
+        border-radius: 15px;
+    }
+    
+    #textInput {
+        padding: 15px;
+        font-size: 14px;
+    }
+    
+    .check-btn {
+        padding: 12px 30px;
+        font-size: 16px;
+    }
+    
+    .sentiment-badge {
+        padding: 12px 25px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .header p {
+        font-size: 1rem;
+    }
+    
+    .analysis-card {
+        padding: 20px;
+    }
+    
+    .check-btn {
+        padding: 10px 25px;
+        font-size: 14px;
+    }
+    
+    .sentiment-badge {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
